@@ -12,13 +12,14 @@ import selectors
 class RonjaSkill(OVOSSkill):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+     
+    def initialize(self):
         self.current_round = 0
         self.stop_called = False
         self.skip_intro = False  # Initialize the variable
         self.keyboard_device = evdev.InputDevice("/dev/input/event7")
         self.selector = selectors.DefaultSelector()
         self.selector.register(self.keyboard_device, selectors.EVENT_READ)
-
 
     def check_hardware_buttons(self):
         for key, events in self.selector.select(timeout=0.1):
