@@ -12,7 +12,8 @@ import selectors
 class RonjaSkill(OVOSSkill):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-     
+
+
     def initialize(self):
         self.current_round = 0
         self.stop_called = False
@@ -21,6 +22,7 @@ class RonjaSkill(OVOSSkill):
         self.selector = selectors.DefaultSelector()
         self.selector.register(self.keyboard_device, selectors.EVENT_READ)
 
+
     def check_hardware_buttons(self):
         for key, events in self.selector.select(timeout=0.1):
             if events & selectors.EVENT_READ:
@@ -28,14 +30,19 @@ class RonjaSkill(OVOSSkill):
                     if event.type == evdev.ecodes.EV_KEY and event.value == 1:
                         if event.code == evdev.ecodes.KEY_KPMINUS:  # NumMinus
                             self.skip_intro_intent()
-                            return 'stop'
+                            #return 'stop'
                         elif event.code == evdev.ecodes.KEY_KPPLUS:  # NumPlus
                             return 'ja'
                         elif event.code == evdev.ecodes.KEY_KPENTER:  # NumEnter
                             return 'nee'
                         elif event.code == evdev.ecodes.KEY_KPSLASH:  # NumSlash
-                            return 'stop'
+                            #return 'stop'
+                            LOG.info(f"Slash pressed")                               
+                            self.bus.emit(Message("mycroft.audio.speech.stop"))
+                            self.stop()
         return None
+
+
 
 
     def generate_round_data(self, round_num):
@@ -44,6 +51,11 @@ class RonjaSkill(OVOSSkill):
             questions = round_data['questions']
             correct_answers = round_data['correct_answers']
             question_audio_files = round_data['audio_files']['question_audio_files']
+
+            # Convert relative paths to absolute paths
+            question_audio_files = [self.root_dir + file_path for file_path in question_audio_files]
+            for file_path in question_audio_files:
+                LOG.info(f"Chosen audio file: {file_path}")
 
             combined = list(zip(questions, correct_answers, question_audio_files))
             random.shuffle(combined)
@@ -54,11 +66,11 @@ class RonjaSkill(OVOSSkill):
                 questions,
                 correct_answers,
                 question_audio_files,
-                audio_files['correct_answer_audio'],
-                audio_files['false_answer_audio'],
-                audio_files['intro'],
-                audio_files['outro'],
-                audio_files['main_question'],
+                self.root_dir + audio_files['correct_answer_audio'],
+                self.root_dir + audio_files['false_answer_audio'],
+                self.root_dir + audio_files['intro'],
+                self.root_dir + audio_files['outro'],
+                self.root_dir + audio_files['main_question'],
                 audio_files['duration_intro'],
                 audio_files['duration_outro'],
                 audio_files['duration_main'],
