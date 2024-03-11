@@ -22,9 +22,12 @@ And thanks of course to Q42 for their beatiful audio creation.
 * resume the next time at certain point in the game
 
 
-## Keyboard/ physical button version
-There's a [keyboard prototype of this skill](https://github.com/timonvanhasselt/skill_ronja_keyboard)
-It uses `python-evdev` for the input events. It can also be used to play with big buttons (for instance for 'Ja' and 'Nee') 
+## Voice version
+There's a [voice prototype of this skill](https://github.com/timonvanhasselt/skill_ronja)
+
+## Keyboard/ physical buttons version
+This skill uses `python-evdev` (don't forget to install) for the input events. It can also be used to play with big buttons (for instance for 'Ja' and 'Nee'). And there's an option to skip intro's with a key.
+Don't forget to set the `event` number of your device and change the keys/byttons.
 
 
 ## Video demo keyboard/buttons (YouTube)
